@@ -1,0 +1,34 @@
+{
+    "name": "alittlemarket/composer-parameter-handler-resolver",
+    "description": "Composer script which will call the `Incenteev` or the `Csa` depending on the composer dev flag",
+    "keywords": ["parameters management"],
+    "homepage": "https://github.com/alittlemarket/ParameterHandlerResolver",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sylvain Mauduit",
+            "email": "sylvain@alittlemarket.fr"
+        },
+        {
+            "name": "Incubart tech dream team",
+            "email": "tech@alittlemarket.fr"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "csa/composer-parameter-handler": "1.0.*",
+        "incenteev/composer-parameter-handler": "~2.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~2.0",
+        "composer/composer": "1.0.*@dev"
+    },
+    "autoload": {
+        "psr-4": { "ALittle\\ParameterHandlerResolver\\": "src/" }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}
