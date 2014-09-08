@@ -28,13 +28,52 @@ class ScriptHandlerResolver
      * in order to force the deployment to fail if an argument is missing.
      *
      * @param Event $event
+     *
+     * @throws \InvalidArgumentException
      */
     public static function buildParameters(Event $event)
     {
+        $extras = $event->getComposer()->getPackage()->getExtra();
+
+        if (!isset($extras['alittle-parameters'])) {
+            throw new \InvalidArgumentException('The parameter handler needs to be configured through the extra.alittle-parameters setting.');
+        }
+
+        $envConfigs = $extras['alittle-parameters'];
+
         if ($event->isDevMode()) {
-            \Incenteev\ParameterHandler\ScriptHandler::buildParameters($event);
+            $processor = new \Incenteev\ParameterHandler\Processor($event->getIO());
+            $configKey = 'dev';
         } else {
-            \Csa\ParameterHandler\ScriptHandler::buildParameters($event);
+            $processor = new \Csa\ParameterHandler\Processor($event->getIO());
+            $configKey = 'no-dev';
+        }
+
+        if (!is_array($envConfigs)) {
+            throw new \InvalidArgumentException('The extra.alittle-parameters setting must be an array or a configuration object.');
+        }
+
+        if (!array_key_exists($configKey, $envConfigs)) {
+            throw new \InvalidArgumentException('The extra.alittle-parameters.'.$configKey.' setting must be defined.');
+        }
+
+        $envConfig = $envConfigs[$configKey];
+
+        if (!is_array($envConfig)) {
+            throw new \InvalidArgumentException('The extra.alittle-parameters.'.$configKey.' setting must be an array or a configuration object.');
+        }
+
+        if (array_keys($envConfig) !== range(0, count($envConfig) - 1)) {
+            $envConfig = array($envConfig);
+        }
+
+        foreach ($envConfig as $config) {
+
+            if (!is_array($config)) {
+                throw new \InvalidArgumentException('The extra.alittle-parameters setting must be an array of configuration objects.');
+            }
+
+            $processor->processFile($config);
         }
     }
 }
